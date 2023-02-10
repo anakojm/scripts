@@ -1,0 +1,1 @@
+sudo ip link set wlo1 down ; sudo macchanger -r wlo1 ; sudo ip link set wlo1 up

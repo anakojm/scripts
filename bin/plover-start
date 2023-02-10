@@ -1,0 +1,1 @@
+setsid -f $HOME/Applicatins/plover.AppImage;sleep 1;$HOME/Applicatins/plover.AppImage -s plover_send_command resume

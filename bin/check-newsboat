@@ -1,0 +1,8 @@
+#!/bin/bash
+/usr/bin/newsboat -x reload
+
+if [ "$(/usr/bin/newsboat -x print-unread)" = "0 unread articles" ]; then
+  exit
+fi
+
+/usr/bin/notify-send -u normal -t 2000 "You have $(/usr/bin/newsboat -x print-unread)"

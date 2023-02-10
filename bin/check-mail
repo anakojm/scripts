@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Count mail
+count() { 
+  find "$HOME"/Mail/*/INBOX -type f | wc -l
+}
+
+# Make sure offlineimap isn't already running
+if [ -z "$(pgrep offlineimap)" ]; then
+
+  # Default msg
+  msg=""
+
+  # Get old email count
+  old=$(count)
+  offlineimap
+
+  # Get email count after sync
+  new=$(count)
+
+  # Overwrite msg if new emails are found
+  if [ "$new" -gt "$old" ]; then
+    msg="$((new - old)) new emails"
+  fi
+
+  notify-send "${msg}"
+fi

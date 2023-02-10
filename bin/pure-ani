@@ -1,0 +1,2 @@
+# start mpv in ASCII, to watch anime in the tty like a real chad
+export ANIMDL_CONFIG=$XDG_CONFIG_HOME/animdl/config-cli.yml;bash $HOME/bin/eztrackma;export ANIMDL_CONFIG=$XDG_CONFIG_HOME/animdl/config.yml

@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/notify-send "It is $(date +%H:%M:%S) now"
