@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#
+if [[ $(playerctl -l | grep -cv mpd) == "0" ]];
+then
+  exit
+fi
+
+if [[ $(playerctl -l | grep -cv mpd) == "1" ]];
+then
+  player=$(playerctl -l | grep -v mpd)
+else
+  player=$(playerctl -l | grep -v mpd | wofi --show dmenu)
+fi
+
+if [[ $player == "" ]];
+then
+  exit
+fi
+
+playerctl -p $player play-pause && notify-send -u low -t 1800 "▶/■ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"

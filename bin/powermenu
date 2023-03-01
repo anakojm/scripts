@@ -1,0 +1,47 @@
+#zsh ~/.config/rofi/bin/usedram!/usr/bin/env bash
+
+## Author  : Aditya Shakya
+## Mail    : adi1090x@gmail.com
+## Github  : @adi1090x
+## Twitter : @adi1090x
+
+# rofi_command="rofi -theme $XDG_CONFIG_HOME/rofi/applets/menu/configs/circle/powermenu.rasi"
+
+# Options
+shutdown=""
+reboot=""
+lock=""
+logout=""
+
+# # Confirmation
+# confirm_exit() {
+# 	rofi -dmenu\
+# 		-i\
+# 		-no-fixed-num-lines\
+# 		-p "Are You Sure? : "\
+# 		-theme $XDG_CONFIG_HOME/rofi/applets/styles/confirm.rasi
+# }
+#
+# # Message
+# msg() {
+# 	rofi -theme "$XDG_CONFIG_HOME/rofi/applets/styles/message.rasi" -e "Available Options  -  yes / y / no / n"
+# }
+
+# Variable passed to rofi
+options="$shutdown\n$reboot\n$lock\n$logout"
+
+chosen="$(echo "$options"|rofi -theme $XDG_CONFIG_HOME/rofi/powermenu.rasi -p "$(uptime | grep -ohe 'up .*' | sed 's/,//g' | awk '{ print $2" " }')|$(acpi | sed 's/Battery 0://;s/until charged//;s/remaining//') | $(date '+%D %H:%M:%S')" -dmenu -selected-row 2)"
+case $chosen in
+    $shutdown)
+			systemctl poweroff
+        ;;
+    $reboot)
+			systemctl reboot
+        ;;
+    $lock)
+      swaylock --screenshots --clock --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 7x5 --effect-vignette 0.5:0.5 --ring-color FF0000 --key-hl-color 880033 --line-color 00000000 --inside-color 00000088 --separator-color 00000000 --grace 2 --fade-in 0.2
+        ;;
+    $logout)
+			swaymsg exit
+        ;;
+esac

@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+## Author  : Aditya Shakya
+## Mail    : adi1090x@gmail.com
+## Github  : @adi1090x
+## Twitter : @adi1090x
+
+if [[ $(playerctl -l | grep -cv mpd) == "0" ]];
+then
+  exit
+fi
+
+if [[ $(playerctl -l | grep -cv mpd) == "1" ]];
+then
+  player=$(playerctl -l | grep -v mpd)
+else
+  player=$(playerctl -l | grep -v mpd | wofi --show dmenu)
+fi
+
+if [[ $player == "" ]];
+then
+  exit
+fi
+
+rofi_command="rofi -theme $XDG_CONFIG_HOME/rofi/playerctl.rasi"
+
+# Gets the current status of player (for us to parse it later on)
+statuspl="$(playerctl -p $player status)"
+# Defines the Play / Pause option content
+if [[ $statuspl == *"[playing]"* ]]; then
+    play_pause=""
+else
+    play_pause=""
+fi
+active=""
+urgent=""
+
+stop=""
+next=""
+previous=""
+
+# Variable passed to rofi
+options="$previous\n$play_pause\n$stop\n$next\n$tog_repeat\n$tog_random"
+
+# Get the current playing song
+current=$(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)
+
+# If player isn't running it will return an empty string, we don't want to display that
+if [[ -z "$current" ]]; then
+    current="-"
+fi
+
+# Spawn the player menu with the "Play / Pause" entry selected by default
+chosen="$(echo -e "$options" | $rofi_command -p "  $current" -dmenu $active $urgent -selected-row 1)"
+case $chosen in
+    $previous)
+         playerctl -p $player previous&& notify-send -u low -t 1800 "◀◀ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
+        ;;
+    $play_pause)
+        playerctl -p $player play-pause && notify-send -u low -t 1800 "▶/■ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
+        ;;
+    $stop)
+        playerctl pause && notify-send -u low -t 1800 "■ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
+        ;;
+    $next)
+        playerctl -p $player next && notify-send -u low -t 1800 "▶▶ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
+        ;;
+    $tog_repeat)
+        mpc -q repeat
+        ;;
+    $tog_random)
+        mpc -q random
+        ;;
+esac
+
