@@ -1,0 +1,1 @@
+rm ~/Music/"$(mpc -f %file% current)"&& notify-send "Deleted" "$(mpc -f %file% current)"
