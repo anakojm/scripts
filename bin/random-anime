@@ -1,0 +1,2 @@
+#!/usr/bin/env zsh
+curl -s -q -X POST -H "Content-Type: application/json" -d '{"query":"query ($id: Int) { Media (id: $id, type: ANIME) { id title { romaji english native } } }", "variables":{"id":"'$(printf "%.*f\n" "0" "$((0.$RANDOM*10000))")'"}}' https://graphql.anilist.co | jq -r '.data.Media.title.romaji,.data.Media.title.english,.data.Media.title.native,.data.Media.id'
