@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-## Author  : Aditya Shakya
-## Mail    : adi1090x@gmail.com
-## Github  : @adi1090x
-## Twitter : @adi1090x
-
 if [[ $(playerctl -l | grep -cv mpd) == "0" ]];
 then
   exit
@@ -14,7 +9,7 @@ if [[ $(playerctl -l | grep -cv mpd) == "1" ]];
 then
   player=$(playerctl -l | grep -v mpd)
 else
-  player=$(playerctl -l | grep -v mpd | wofi --show dmenu)
+  player=$(playerctl -l | grep -v mpd | fzf)
 fi
 
 if [[ $player == "" ]];
@@ -22,28 +17,17 @@ then
   exit
 fi
 
-rofi_command="rofi -theme $XDG_CONFIG_HOME/rofi/playerctl.rasi"
-
 # Gets the current status of player (for us to parse it later on)
 statuspl="$(playerctl -p $player status)"
 # Defines the Play / Pause option content
 if [[ $statuspl == *"[playing]"* ]]; then
-    play_pause=""
+  play_pause="pause (playing)"
 else
-    play_pause=""
+  play_pause="play (paused)"
 fi
-active=""
-urgent=""
-
-stop=""
-next=""
-previous=""
 
 # Variable passed to rofi
-options="$previous\n$play_pause\n$stop\n$next\n$tog_repeat\n$tog_random"
-
-# Get the current playing song
-current=$(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)
+options="$play_pause\nprevious\nnext\nstop\n$tog_repeat\n$tog_random"
 
 # If player isn't running it will return an empty string, we don't want to display that
 if [[ -z "$current" ]]; then
@@ -51,18 +35,18 @@ if [[ -z "$current" ]]; then
 fi
 
 # Spawn the player menu with the "Play / Pause" entry selected by default
-chosen="$(echo -e "$options" | $rofi_command -p "  $current" -dmenu $active $urgent -selected-row 1)"
+chosen="$(echo -e "$options" | fzf --preview="playerctl -p $player metadata xesam:title 2>/dev/null; playerctl -p $player metadata xesam:album 2>/dev/null" --preview-window=up:wrap:noborder)"
 case $chosen in
-    $previous)
+    previous)
          playerctl -p $player previous&& notify-send -u low -t 1800 "◀◀ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
         ;;
     $play_pause)
         playerctl -p $player play-pause && notify-send -u low -t 1800 "▶/■ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
         ;;
-    $stop)
+    stop)
         playerctl pause && notify-send -u low -t 1800 "■ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
         ;;
-    $next)
+    next)
         playerctl -p $player next && notify-send -u low -t 1800 "▶▶ $(playerctl -p $player metadata xesam:title; playerctl -p $player metadata xesam:album)"
         ;;
     $tog_repeat)
@@ -70,6 +54,9 @@ case $chosen in
         ;;
     $tog_random)
         mpc -q random
+        ;;
+    "")
+        exit
         ;;
 esac
 
