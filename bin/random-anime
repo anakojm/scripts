@@ -1,2 +1,2 @@
-#!/usr/bin/env zsh
-curl -s -q -X POST -H "Content-Type: application/json" -d '{"query":"query ($id: Int) { Media (id: $id, type: ANIME) { id title { romaji english native } } }", "variables":{"id":"'$(shuf -n 1 -i 1000-9999)'"}}' https://graphql.anilist.co | jq -r '.data.Media.title.romaji,.data.Media.title.english,.data.Media.title.native,.data.Media.id'
+#!/usr/bin/env bash
+curl -s "https://api.jikan.moe/v4/random/anime" | jq -r '.data.title, .data.title_english, .data.title_japanese, .data.url'
