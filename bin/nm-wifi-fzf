@@ -1,6 +1,3 @@
-local ssid
-local conn
-
 nmcli device wifi rescan > /dev/null
 ssid=$(nmcli device wifi list | tail -n +2 | grep -v '^  *\B--\B' | fzf -m | sed 's/^ *\*//' | awk '{print $1}')
 

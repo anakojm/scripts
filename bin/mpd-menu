@@ -2,7 +2,7 @@
 
 
 # Gets the current status of mpd (for us to parse it later on)
-status="$(mpc status)"
+status="$(mpc --host $(pass mpd)@192.168.0.46 status)"
 # Defines the Play / Pause option content
 if [[ $status == *"[playing]"* ]]; then
   play_pause="pause (playing)"
@@ -32,22 +32,22 @@ fi
 options="$play_pause\nprevious\nnext\n$tog_repeat\n$tog_random"
 
 # Spawn the mpd menu with the "Play / Pause" entry selected by default
-chosen="$(echo -e "$options" | fzf --preview='mpc -f "%artist% - %title% - %file%" current' --preview-window=up:wrap:noborder)"
+chosen="$(echo -e "$options" | fzf --preview='mpc --host $(pass mpd)@192.168.0.46 -f "%artist% - %title% - %file%" current' --preview-window=up:wrap:noborder)"
 case $chosen in
     previous)
-        mpc -q prev
+        mpc --host $(pass mpd)@192.168.0.46 -q prev
         ;;
     $play_pause)
-        mpc -q toggle
+        mpc --host $(pass mpd)@192.168.0.46 -q toggle
         ;;
     next)
-        mpc -q next
+        mpc --host $(pass mpd)@192.168.0.46 -q next
         ;;
     $tog_repeat)
-        mpc -q repeat
+        mpc --host $(pass mpd)@192.168.0.46 -q repeat
         ;;
     $tog_random)
-        mpc -q random
+        mpc --host $(pass mpd)@192.168.0.46 -q random
         ;;
     "")
         exit

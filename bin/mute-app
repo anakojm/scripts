@@ -1,12 +1,12 @@
 #!/bin/bash
 
 is_mute() {
-    pacmd list-sink-inputs | perl -0777 -pe "s/.*$(get_index "$1").*?muted: ((?:yes|no).).*/\1/gs"
+    pactl list sink-inputs | perl -0777 -pe "s/.*$(get_index "$1").*?Mute: ((?:yes|no).).*/\1/gs"
 }
 
 adjust_muteness() {
     local index=$(get_index "$1")
-    [[ "$index" ]] && pacmd set-sink-input-mute "$index" $2 >/dev/null
+    [[ "$index" ]] && pactl set-sink-input-mute "$index" $2 >/dev/null
 }
 
 get_index() {
@@ -14,11 +14,11 @@ get_index() {
     if [[ -z "$pid" ]]; then
         echo "error: no running processes for: $1" >&2
     else
-        pacmd list-sink-inputs |
-        awk -v pid=$pid '
-            $1 == "index:" {idx = $2}
+        pactl list sink-inputs |
+        awk -v pid=$pid ' 
+            $1 == "Sink" && $2 == "Input" {idx = $3}
             $1 == "application.process.id" && $3 == "\"" pid "\"" {print idx; exit}
-        '
+        ' | tr -d "#"
     fi
 }
 
