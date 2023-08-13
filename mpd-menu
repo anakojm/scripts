@@ -28,8 +28,8 @@ else
     tog_random=" Parsing error"
 fi
 
-# Variable passed to rofi
-options="$play_pause\nprevious\nnext\n$tog_repeat\n$tog_random"
+# Variable passed to fzf
+options="previous\nnext\n$play_pause\n$tog_repeat\n$tog_random"
 
 # Spawn the mpd menu with the "Play / Pause" entry selected by default
 chosen="$(echo -e "$options" | fzf --preview='mpc --host $(pass mpd)@192.168.0.46 -f "%artist% - %title% - %file%" current' --preview-window=up:wrap:noborder)"

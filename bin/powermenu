@@ -1,1 +1,0 @@
-sh -c "$(echo -e 'lock\nsystemctl poweroff\nsystemctl reboot\nswaymsg exit'|fzf --reverse --preview="date '+%D %H:%M:%S';acpi | sed 's/Battery 0://;s/until charged//;s/remaining//'" --preview-window=up:wrap:noborder)"

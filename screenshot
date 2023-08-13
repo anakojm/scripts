@@ -1,0 +1,4 @@
+file=$(date '+%Y%m%d_%Hh%Mm%Ss_grim.png')
+selection="$(slurp)"
+grim -g "$selection" ~/Medias/Pictures/screenshots/$file || grim ~/Medias/Pictures/screenshots/$file
+kitty --class=screenshot zsh -c "kitty +kitten icat ~/Medias/Pictures/screenshots/$file;echo 'Copy?';read && wl-copy < ~/Medias/Pictures/screenshots/$file;read"

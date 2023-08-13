@@ -1,7 +1,7 @@
 #!/bin/bash
 
 is_mute() {
-    pactl list sink-inputs | perl -0777 -pe "s/.*$(get_index "$1").*?Mute: ((?:yes|no).).*/\1/gs"
+    pactl list sink-inputs | perl -0777 -pe "s/.*Sink Input #$(get_index "$1").*?Mute: ((?:yes|no).).*/\1/gs"
 }
 
 adjust_muteness() {
@@ -18,7 +18,7 @@ get_index() {
         awk -v pid=$pid ' 
             $1 == "Sink" && $2 == "Input" {idx = $3}
             $1 == "application.process.id" && $3 == "\"" pid "\"" {print idx; exit}
-        ' | tr -d "#"
+        ' | tr -d '#'
     fi
 }
 

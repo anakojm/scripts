@@ -1,0 +1,27 @@
+#!/bin/bash
+
+notify-send -t 5000 "Listening!" "Please wait..."
+
+cd  ~/.local/share/songrec/
+
+# 20 seconds timeout to the songrec command.
+timeout 20s songrec recognize -d default -j > ./track.json
+
+# if JSON file is empty, songrec couldn't find anything after 20 seconds. Notify user and exit.
+if [ ! $(stat -c%s "./track.json") != "0" ]; then
+	notify-send -t 5000 "Sorry!" "Can't seem to find that..."
+	rm -rf ./track.json
+	exit
+fi
+
+track=$(cat track.json)
+imageURL=$(echo $track | jq .track.images.coverart | tr -d '"')
+artist=$(echo $track | jq .track.subtitle | tr -d '"')
+song=$(echo $track | jq .track.title | tr -d '"')
+
+curl -s ${imageURL} --output image.jpg 
+
+notify-send -t 10000 -i ~/.local/share/songrec/image.jpg "Song found!" "$song - $artist"
+
+rm -rf ./track.json
+rm -rf ./image.jpg
